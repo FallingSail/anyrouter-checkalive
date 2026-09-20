@@ -1,0 +1,21 @@
+name: Codex Start Now
+
+on:
+  workflow_dispatch:
+    inputs:
+      interval:
+        description: 'Request interval in minutes (5-1440)'
+        type: string
+        required: true
+        default: '15'
+
+permissions:
+  contents: read
+
+jobs:
+  control:
+    uses: ./.github/workflows/scheduler-worker.yml
+    with:
+      action: immediate
+      interval: ${{ inputs.interval }}
+    secrets: inherit

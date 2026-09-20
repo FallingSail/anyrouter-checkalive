@@ -1,0 +1,14 @@
+name: Codex Stop Schedule
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  control:
+    uses: ./.github/workflows/scheduler-worker.yml
+    with:
+      action: stop
+    secrets: inherit

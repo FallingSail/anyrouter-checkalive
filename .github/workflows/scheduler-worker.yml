@@ -1,0 +1,76 @@
+name: Codex Schedule Worker
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_call:
+    inputs:
+      action:
+        type: string
+        default: tick
+      interval:
+        type: string
+        default: '15'
+      start_time:
+        type: string
+        default: '04:00'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codex-keepalive
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check or update schedule
+        id: schedule
+        run: python scripts/scheduler.py
+        env:
+          SCHEDULER_TOKEN: ${{ secrets.SCHEDULER_TOKEN }}
+          SCHEDULE_ACTION: ${{ inputs.action || 'tick' }}
+          INTERVAL_MINUTES: ${{ inputs.interval || '15' }}
+          START_TIME: ${{ inputs.start_time || '04:00' }}
+      - uses: actions/setup-node@v4
+        if: steps.schedule.outputs.run_probe == 'true'
+        with:
+          node-version: '22'
+      - name: Install Codex
+        if: steps.schedule.outputs.run_probe == 'true'
+        run: npm install -g "@openai/codex@${CODEX_VERSION}"
+        env:
+          CODEX_VERSION: ${{ vars.CODEX_VERSION || 'latest' }}
+      - name: Probe once
+        if: steps.schedule.outputs.run_probe == 'true'
+        shell: bash
+        run: |
+          codex --version
+          status=0
+          bash scripts/run-all.sh --once || status=$?
+          if [ "$status" -eq 0 ]; then
+            echo "## Probe result: success" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Probe result: failed (exit $status)" >> "$GITHUB_STEP_SUMMARY"
+            echo "See Probe once logs for account results." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
+        env:
+          ANYROUTER_TOKENS: ${{ secrets.ANYROUTER_TOKENS }}
+          BASE_URL: ${{ vars.BASE_URL }}
+          MODEL: ${{ vars.MODEL }}
+          QQ_EMAIL: ${{ secrets.QQ_EMAIL }}
+          QQ_SMTP_AUTH_CODE: ${{ secrets.QQ_SMTP_AUTH_CODE }}
+          MAX_DURATION_SEC: '1200'
+          PROBE_TIMEOUT_SEC: ${{ vars.PROBE_TIMEOUT_SEC || '120' }}
+          SLEEP_BETWEEN_TOKENS: ${{ vars.SLEEP_BETWEEN_TOKENS || '30' }}

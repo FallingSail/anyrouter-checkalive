@@ -1,0 +1,27 @@
+name: Codex Start At Beijing Time
+
+on:
+  workflow_dispatch:
+    inputs:
+      interval:
+        description: 'Request interval in minutes (5-1440)'
+        type: string
+        required: true
+        default: '15'
+      start_time:
+        description: 'Next start in Beijing time (HH:MM); passed times mean tomorrow'
+        type: string
+        required: true
+        default: '04:00'
+
+permissions:
+  contents: read
+
+jobs:
+  control:
+    uses: ./.github/workflows/scheduler-worker.yml
+    with:
+      action: scheduled
+      interval: ${{ inputs.interval }}
+      start_time: ${{ inputs.start_time }}
+    secrets: inherit

@@ -14,6 +14,10 @@ Completions 不够。BASE_URL 和 MODEL 必须由你按站点文档填写，没�
 
 ## GitHub Actions
 
+**推荐的新入口：** 一次点击启动、跨天持续请求、可配置10/15/30分钟间隔，
+详见 [SCHEDULER.md](SCHEDULER.md)。需增加存储库 Secret `SCHEDULER_TOKEN`。
+旧 Keepalive 的每日定时已移除，避免与新计划冲突；旧三个任务仍可手动运行。
+
 1. 将当前修改后的代码提交到你自己的仓库（这里只修改了本地文件）。
 2. Settings → Secrets and variables → Actions → Secrets：
    - ANYROUTER_TOKENS：每行一个中转站 token。
@@ -24,7 +28,7 @@ Completions 不够。BASE_URL 和 MODEL 必须由你按站点文档填写，没�
    - CODEX_VERSION：可选，建议验证后固定 CLI 版本；未设置时安装 latest。
 4. 先手动运行 Codex Keepalive Once，确认正常再启用定时任务。
 
-Keepalive 每天北京时间 02:00 启动，运行约六小时，间隔约 50 分钟，
+旧 Keepalive 手动启动后运行约六小时，间隔约 50 分钟，
 不是全天覆盖。Recovery Monitor 每 30 分钟检查，全部成功且单次耗时
 均小于 30 秒时退出。Actions 定时触发可能延迟，不保证精确时刻。
 三个工作流共享并发组，避免同时消耗同一批账号；GitHub 只保留有限的待运行任务。
