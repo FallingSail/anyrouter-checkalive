@@ -1,0 +1,30 @@
+Explain the difference between Python == and is with one short example.
+How can Python remove duplicates from a list while preserving order?
+Why should a Python function avoid using an empty list as a default argument?
+Show a Python expression that counts occurrences of each item in a list.
+How do shallow copies and deep copies differ for nested Python lists?
+Show how Python dict.get can provide a default for a missing key.
+Why is modifying a list while iterating over it error-prone?
+Show how to sort a list of Python dictionaries by the age field.
+How do JavaScript let and const differ?
+Explain the difference between JavaScript == and === with one example.
+How can JavaScript map transform an array without modifying the original?
+When should JavaScript use Promise.all instead of sequential await calls?
+Explain the difference between JavaScript null and undefined.
+Show a TypeScript type for an object with a required name and optional age.
+Why is TypeScript unknown safer than any for external input?
+Write a SQL query that finds duplicate emails in a users table.
+Explain the difference between SQL WHERE and HAVING.
+Why does SQL use IS NULL instead of = NULL?
+How does a LEFT JOIN differ from an INNER JOIN?
+How can parameterized SQL queries prevent SQL injection?
+Why is binary search O(log n), and what prerequisite does it have?
+When is a hash set preferable to a list for membership checks?
+Explain a stack and a queue with one programming use case each.
+What is an off-by-one error? Give a short loop example.
+Why should an HTTP client set a request timeout?
+Explain idempotency using an HTTP PUT request as an example.
+What is the difference between authentication and authorization in an API?
+How does a unit test differ from an integration test?
+What is the purpose of a database transaction?
+How does git revert differ from git reset for shared history?

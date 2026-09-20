@@ -1,0 +1,44 @@
+name: Codex Keepalive Once
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Responses API base URL (or variable BASE_URL)'
+        required: false
+      model:
+        description: 'Relay model ID (or variable MODEL)'
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codex-keepalive
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Codex
+        run: npm install -g "@openai/codex@${CODEX_VERSION}"
+        env:
+          CODEX_VERSION: ${{ vars.CODEX_VERSION || 'latest' }}
+      - run: codex --version
+      - name: Run probes
+        run: bash scripts/run-all.sh --once
+        env:
+          ANYROUTER_TOKENS: ${{ secrets.ANYROUTER_TOKENS }}
+          BASE_URL: ${{ inputs.base_url || vars.BASE_URL }}
+          MODEL: ${{ inputs.model || vars.MODEL }}
+          QQ_EMAIL: ${{ secrets.QQ_EMAIL }}
+          QQ_SMTP_AUTH_CODE: ${{ secrets.QQ_SMTP_AUTH_CODE }}
